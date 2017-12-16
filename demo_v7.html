@@ -50,7 +50,7 @@
 		<script type="text/javascript">
 
     d3.queue()
-      .defer(d3.csv, 'actorNodes_v4.csv')
+      .defer(d3.csv, 'actorNodesUrl_v4.csv')
       .defer(d3.csv, 'actorLinks_v4.csv')
 			.awaitAll(function(err, data){
 					var nodes = data[0];
