@@ -1,0 +1,190 @@
+<!-- demo_v3 + 노드를 클릭할 경우 연결된 링크가 강조되는 기능 추가  -->
+<!-- link 강조 기능 ->  mouseover/out으로 바꾸기 -->
+<!DOCTYPE html>
+<html lang = kr>
+	<head>
+		<meta charset="utf-8">
+		<!-- <link rel="text/stylesheet" href="line.css"> -->
+		<style>
+      body { margin : 0 }
+      svg {
+      	background-color : #000;
+				display : block; }
+      svg .texts text{
+          font-family: sans-serif;
+          font-size : 11px;
+					fill : grey;
+          text-shadow : 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 #fff, -1px 0 0 #fff;
+      }
+
+      svg .nodes circle{
+          fill : #000;
+          /*stroke : #000;*/
+      }
+
+      svg .links line {
+          stroke : #DDD;
+					opacity: 0.1;
+					width : 2px;
+      }
+
+			/*
+			svg .selected_link line {
+				stroke : #FFF;
+				opacity: 1;
+			}*/
+
+		 </style>
+	</head>
+
+	<body>
+    <svg>
+			<defs>
+				<clipPath id="svgPath" clipPathUnits = "objectBoundingBox">
+					<circle />
+				</clipPath>
+			</defs>
+    </svg>
+
+    <script src="https://d3js.org/d3.v4.min.js"> </script>
+		<script type="text/javascript">
+
+    d3.queue()
+      .defer(d3.csv, 'actorNodesSim_v4.csv')
+      .defer(d3.csv, 'actorLinksSim_v4.csv')
+			.awaitAll(function(err, data){
+					var nodes = data[0];
+					var links = data[1];
+					var MAX_L = d3.max(nodes, function(d) {return +d.link_cnt;});
+					var r = 50;
+					r_nodes = nodes.map(function(d, i){
+						return {
+							 'person_code' : d.person_code,
+							 'dr_cnt' : +d.dr_cnt,
+							 'person_name' : d.person_name,
+							 'path_mean' : d.path_mean,
+							 'link_cnt' : +d.link_cnt,
+							 'person_pic_url' : d.person_pic_url,
+					 		'person_en' : d.person_en,
+					 		'r' : r * ((+d.link_cnt)/MAX_L),
+							'idx' : i
+						 };
+					});
+					render(r_nodes, links);
+      });
+
+function render(nodes, links){
+
+  var W = 1000;
+  var H = 1000;
+	var MAX_L = d3.max(nodes, function(d) {return +d.link_cnt;});
+
+
+	var sampleNodes = d3.shuffle(r_nodes).slice(0,100);
+	console.log(sampleNodes[0])
+
+	var sampleLinks = links.filter(function(d){
+		var s = 0;
+		for(var i=0;i<sampleNodes.length;i++){
+			s = s+(d.source == sampleNodes[i].person_code ? 1 : 0);
+			s = s+(d.target == sampleNodes[i].person_code ? 1 : 0);
+		}
+		return (s == 2);
+	})
+
+	var root=d3.select('svg')
+					.attr("width",W)
+					.attr("height",H);
+
+	root.select('defs #svgPath circle')
+			.attr('cx', 0.5)
+			.attr('cy', 0.5)
+			.attr('r', 0.5);
+
+  var linksSel = root.append('g')
+      .attr('class', 'links')
+      .selectAll('line')
+      .data(links)
+      .enter()
+      .append('line')
+			.attr('class', function(d) {return d.source_en});
+
+  var nodesSel = root.append('g')
+      .attr('class', 'nodes')
+      .selectAll('image')
+			.data(sampleNodes)
+      // .data(nodes)
+      .enter()
+      .append('image')
+			.attr('width', function(d) { return d.r * 2;})
+			.attr('height', function(d) { return d.r * 2;})
+      //.attr('width', r * 2)
+			//.attr('height', r * 2)
+			.attr('clip-path','url(#svgPath)')
+			.attr('href', function(d) {return d.person_pic_url});
+      // .call(d3.drag()
+      //     .on('start',function(d) { sim.alphaTarget(0.3).restart();
+      //                                 d.fx = d.x;
+      //                                 d.fy = d.y;})
+      //     .on('drag', function(d) { d.fx = d3.event.x; d.fy=d3.event.y;})
+      //     .on('end', function(d) { sim.alphaTarget(0);
+      //                              d.fx = null;
+      //                              d.fy = null; })
+      // )
+
+  var textsSel = root.append('g')
+      .attr('class','texts')
+      .selectAll('text')
+			.data(sampleNodes)
+      // .data(nodes)
+      .enter()
+      .append('text')
+      .attr('x', 0)
+      .attr('y', 2)
+			.attr('text-anchor', 'middle')
+			.attr('alignment-baseline', 'middle')
+      .text(function(d) { return d.person_name;})
+			.on("mouseover", function(d) {
+				d3.selectAll('.' + d.person_en)
+						.style("stroke","white")
+						.style("opacity", 1)
+						.style('stroke-width','4px')
+						.classed('selected_link', true);
+			})
+			.on("mouseout",function(d){
+				d3.selectAll('.selected_link')
+						.style("stroke","#DDD")
+						.style("opacity",0.1)
+						.style('stroke-width','2px')
+						.classed('selected_link', false);
+			});
+
+  var sim = d3.forceSimulation(sampleNodes)
+					.force('charge', d3.forceManyBody().strength(-30))            // default : strength =  -30
+          .force('center', d3.forceCenter (W/2 ,H/2))
+					.force('collide', d3.forceCollide( function(d) { return 200 * (+d.link_cnt) / MAX_L ; }))
+					.force('link', d3.forceLink(sampleLinks).id(function (d) {return d.person_code;}))
+					.on('tick', onTick);
+
+
+  function onTick() {
+      nodesSel
+          .style('transform', function (d) {
+						d.x = Math.max(d.r, Math.min(d.x, W-d.r))
+						d.y = Math.max(d.r, Math.min(d.y, H-d.r))
+						 return 'translate(' + (d.x - d.r) + 'px, ' + (d.y - d.r) + 'px)';});
+      textsSel
+          .style('transform', function (d) {return 'translate(' + d.x + 'px, ' + (d.y + d.r) + 'px)';});
+			linksSel
+		     .attr('x1', function(d) {return d.source.x;})
+         .attr('y1', function(d) {return d.source.y;})
+				 .attr('x2', function(d) {return d.target.x;})
+		     .attr('y2', function(d) {return d.target.y;})
+
+	  }
+	}
+	</script>
+
+	</body>
+
+</html>

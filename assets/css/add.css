@@ -1,0 +1,49 @@
+.inner {
+    text-align: center;
+    margin: 0;
+}
+
+.col h3 {
+  margin-bottom: 0.7em;
+}
+
+
+.alt {
+  width: 10em;
+  margin: 0 auto;
+}
+
+.text-section {
+  width:100%;
+  text-align: center;
+  margin-top: 2em;
+}
+
+.visualization1, .visualization2, .visualization3, .visualization4{
+  width: 100%;
+  margin: 0 auto;
+}
+
+
+.wrapper.style1 {
+  padding: 4em 0;
+}
+
+.tab-list a {
+  margin: 0 2em;
+}
+
+
+.button.big.alt.scrolly {
+  width: 200px;
+  padding: 0;
+  margin: 1em 2em ;
+  background-color: #ffffff;
+	color: #062038 !important;
+}
+
+
+section.wrapper.style1{
+  padding-left: 0;
+  padding-right: 0;
+}

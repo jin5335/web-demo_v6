@@ -1,0 +1,104 @@
+#v1 {
+
+  width: 100%;
+  margin: 0 auto;
+display : block; }
+				
+      #v1 .texts text{
+          font-family: sans-serif;
+          font-size : 11px;
+					fill : grey;
+          text-shadow : 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 #fff, -1px 0 0 #fff;
+      }
+
+      #v1 .nodes circle{
+          fill : #000;
+          /*stroke : #000;*/
+      }
+
+      #v1 .links line {
+          stroke : #DDD;
+					opacity: 0.1;
+					width : 2px;
+      }
+
+
+
+#v2 {
+  display : block;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#v2 .texts text{
+    font-family: sans-serif;
+    font-size : 11px;
+    text-shadow : 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 #fff, -1px 0 0 #fff;
+    opacity : 0;
+    fill : white;
+}
+
+#v2 .nodes circle{
+    fill : #DDD;
+    stroke : #000;
+}
+
+#v2 .links line {
+    stroke : #000;
+    fill : #FFF;
+}
+
+
+
+#v3 {
+  display : block;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#v3 .texts text{
+    font-family: sans-serif;
+    font-size : 11px;
+    text-shadow : 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 #fff, -1px 0 0 #fff;
+}
+
+#v3 .nodes circle{
+    fill : #DDD;
+    stroke : #000;
+}
+
+#v3 .links line {
+    stroke : #000;
+    fill : #FFF;
+}
+
+#v3 {
+  opacity : 1;
+}
+
+
+#v4 {
+  display : block;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#v4 .texts text{
+    font-family: sans-serif;
+    font-size : 11px;
+    text-shadow : 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 #fff, -1px 0 0 #fff;
+}
+
+#v4 .nodes circle{
+    fill : #DDD;
+    stroke : #000;
+}
+
+#v4 .links line {
+    stroke : #000;
+    fill : #FFF;
+}
+
+.selected {
+  opacity : 1;
+}
